@@ -40,6 +40,17 @@ Explainable Boosting Machines: implements explainble boosting machines predictio
 
 The data is not uploaded since access to the MIMIC-IV 2.0 data is restricted for credentialed users for which CITI Data or Specimens Only Research is required and a data use agreement is signed. The researcher must complete a course in protecting human research participants. Researchers can apply for access to the data by following the instructions on this page: https://physionet.org/content/mimiciv/2.0/#files-panel.
 
+The tables used from MIMIC-IV 2.0 are as follows:
+
+From hosp module:
+- patients 
+- diagnoses_icd
+
+From icu module:
+- chartevents
+- d_items
+- 
+
 ## License<a name="license"></a>
 
 Please note that the MIMIC database citation mentioned above is for reference purposes only and should be appropriately cited according to the database's guidelines.
