@@ -1,0 +1,17 @@
+/*
+ create a table where the average of each vital is taken if measurements
+ are taken within a 30-minute window of each other. (mean for continuous variables,
+ mode for discrete)
+ */
+CREATE TABLE vitals_grouby_30min AS
+SELECT subject_id, stay_id, hadm_id,charttime, anchor_age, gender,
+       AVG(temperature),
+       AVG(respiration),
+       AVG(heart_rate),
+       AVG(sats),
+       AVG(systolic_bp),
+       MAX(gcs_verbal),
+       MAX(gcs_motor),
+       MAX(gcs_eye)
+       FROM vitals_across_patient_admissions
+GROUP BY strftime('%H', charttime, '+30 minutes'), stay_id;
