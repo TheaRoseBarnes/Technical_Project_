@@ -23,15 +23,14 @@ Through this project, the aim is to advance patient risk prediction in the ICU, 
 
 ## Installation<a name="installation"></a>
 
-Steps for installation go here.
 
 ## Usage<a name="usage"></a>
 
-###1.Feature_transformation.py
+### 1.Feature_transformation.py
 The Feature_transformation.py script utilizes the vitals_groupby_30min table from the SQL tables file to preprocess the raw vital measurement data. This table contains vital measurement features aggregated over 30-minute intervals for each patient stay. The script applies various transformations depending on the distribution of each feature. The output of this script is scaled_df, which contains the transformed data ready for dynamic time warping.
-###2.DTW.py
+### 2.DTW.py
 The DTW.py script takes scaled_df as input, representing the preprocessed vital measurement data for patients. It performs either independent or dependent dynamic time warping (DTW) on the data, considering the unique temporal patterns of patients' vital measurement trajectories. The result is the average_dtw_matrix, an nxn distance matrix, where n is the number of unique patient stays. Each value in the matrix represents the average optimal DTW alignment distance between the vital measurement trajectories of n patients.
-###3.Clustering.py
+### 3.Clustering.py
 The Clustering.py script receives the average_dtw_matrix as input. It performs dimensionality reduction and clustering on the distance matrix to identify patient subtypes based on similar vital measurement patterns. The script implements UMAP dimensionality reduction and HDBSCAN clustering and internal cluster validation methods to ensure robust and meaningful clustering results.
 
 This entire process forms the basis of patient subtyping using vital measurements. By leveraging dynamic time warping and clustering techniques, it enables the identification of distinct patient groups with similar vital measurement trajectories. These patient subtypes can provide valuable insights for personalized healthcare and targeted treatment strategies.
