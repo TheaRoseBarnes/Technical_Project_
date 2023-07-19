@@ -1,3 +1,7 @@
+# This script performs data transformation on vital measurement features based on their distribution characteristics.
+
+# Used tables: vitals_grouby_30min
+
 # import packages
 import pandas as pd
 from sklearn import preprocessing
@@ -5,7 +9,7 @@ from sklearn.preprocessing import scale
 
 
 # import data
-df = pd.read_csv('/Users/theabarnes/Documents/Masters/Technical Project/Pycharm/Grouped_prediction2_NEW.csv')
+df = pd.read_csv('')
 df = df[['stay_id','charttime','subject_id','hadm_id', 'AVG(temperature)','AVG(respiration)','AVG(heart_rate)','AVG(sats)','AVG(systolic_bp)','MAX(gcs_verbal)','MAX(gcs_motor)','MAX(gcs_eye)']]
 
 # fliter range values
