@@ -9,29 +9,31 @@ from sklearn.preprocessing import scale
 
 
 # import data
-df = pd.read_csv('')
+df = pd.read_csv('/Users/theabarnes/Documents/Masters/Technical Project/Pycharm/clustering_table_demo.csv')
 df = df[['stay_id','charttime','subject_id','hadm_id', 'AVG(temperature)','AVG(respiration)','AVG(heart_rate)','AVG(sats)','AVG(systolic_bp)','MAX(gcs_verbal)','MAX(gcs_motor)','MAX(gcs_eye)']]
+# rename column headings
+df.columns =['stay_id','charttime','subject_id','hadm_id', 'temperature','respiration','heart_rate','sats','systolic_bp','gcs_verbal','gcs_motor','gcs_eye']
 
 # fliter range values
 # temp - 30 – 42 C which is 86- 107.6
-new_df = df[df['AVG(temperature)'].between(86, 107.6)]
+new_df = df[df['temperature'].between(86, 107.6)]
 # heart rate 40-300
-new_df = new_df[new_df['AVG(heart_rate)'].between(40,300)]
+new_df = new_df[new_df['heart_rate'].between(40,300)]
 # respirtaiory 6-50
-new_df = new_df[new_df['AVG(respiration)'].between(6,50)]
+new_df = new_df[new_df['respiration'].between(6,50)]
 # blood pressure 40-200
-new_df = new_df[new_df['AVG(systolic_bp)'].between(40,200)]
+new_df = new_df[new_df['systolic_bp'].between(40,200)]
 # SATS 0-160
-new_df = new_df[new_df['AVG(sats)'].between(0,160)]
+new_df = new_df[new_df['sats'].between(0,160)]
 
 
 
 # glasco coma scale values
 di = {'Confused': 4, 'Oriented': 5, 'No Response-ETT': 1,'No Response': 1, 'Incomprehensible sounds': 2, 'Inappropriate Words': 3,'Obeys Commands': 6, 'Flex-withdraws': 4, 'Localizes Pain': 5, 'No response': 1, 'Abnormal Flexion': 3,'To Speech':3,'Spontaneously':4,'To Pain':2,'None':1, 'Abnormal extension': 2}
 
-new_df['MAX(gcs_eye)'].replace(di, inplace=True)
-new_df['MAX(gcs_verbal)'].replace(di, inplace=True)
-new_df['MAX(gcs_motor)'].replace(di, inplace=True)
+new_df['gcs_eye'].replace(di, inplace=True)
+new_df['gcs_verbal'].replace(di, inplace=True)
+new_df['gcs_motor'].replace(di, inplace=True)
 
 new_all_vitals_main = new_df
 
@@ -118,6 +120,3 @@ scaling = {'temperature':'scale','heart_rate':'not','systolic_bp':'scale','respi
 feature_list1 = ['temperature','heart_rate','systolic_bp', 'respiration','sats', 'gcs_eye', 'gcs_motor','gcs_verbal' ]
 
 scaled_df = scale_features(new_df, feature_list1, scaling)
-#stay = new_df[['stay_id','charttime']]
-#scaled_df = pd.merge(scaled_df,stay, left_index=True, right_index=True)
-
