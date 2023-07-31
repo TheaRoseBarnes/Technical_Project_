@@ -1,7 +1,14 @@
+# import modules
 import pandas as pd
 import numpy as np
 import dtaidistance
 import itertools
+
+# The script DTW computes the independent DTW between all vital measurements for all patients, resulting in 
+# an nxn distance matrix where n is the number of unique patient stays, and the matrix contains the values 
+# quantifying the pairwise average optimal DTW alignment between patient vital measurement trajectories.
+
+# For this script, the scaled_df outputted in Feature_Transformation.py is required.
 
 
 def fill_mean(df, lst_features):
@@ -23,25 +30,27 @@ def fast_mode(df, key_cols, value_col):
               .drop_duplicates(subset=key_cols)).drop(columns='counts')
 
 
-def depen_dtw(df, patients):
-    dictionary = {}
-    for stay in patients:
-        dictionary["stay{0}".format(stay)] = (df.loc[df['stay_id'] == stay])[
-            ['charttime', 'MIN(temperature)', 'MIN(respiration)', 'MIN(heart_rate)', 'MIN(sats)', 'MIN(systolic_bp)',
-             'MIN(gcs_eye)', 'MIN(gcs_verbal)', 'MIN(gcs_motor)']].sort_values(by='charttime').drop('charttime',
-                                                                                                    axis=1).to_numpy()
-    variable_names = list(dictionary.keys())
-    combs = list(itertools.combinations(variable_names, 2))
-    n = len(patients)
-    # df_stay_id = pd.DataFrame.from_records(variable_names, columns=['stay_id','results'])
-    stay = pd.DataFrame([dictionary]).melt()
-    dist = lambda a, b: dtw_ndim.distance(a, b)
-    distance_vectors = [dist(dictionary[pair[0]], dictionary[pair[1]]) for pair in combs]
-    # DTW_distance_matrix = squareform(np.array(distance_vectors))
-    DTW_distance_matrix = pd.DataFrame(squareform(np.array(distance_vectors)), columns=stay.variable.unique(),
-                                       index=stay.variable.unique())
-    #DTW_distance_matrix.to_csv('out_dtw_distance_matrix', index=False)
-    return DTW_distance_matrix
+# dependent DTW is commented out since it was not applied
+
+# def depen_dtw(df, patients):
+#     dictionary = {}
+#     for stay in patients:
+#         dictionary["stay{0}".format(stay)] = (df.loc[df['stay_id'] == stay])[
+#             ['charttime', 'temperature', 'respiration', 'heart_rate', 'sats', 'systolic_bp',
+#              'gcs_eye', 'gcs_verbal', 'gcs_motor']].sort_values(by='charttime').drop('charttime',
+#                                                                                                     axis=1).to_numpy()
+#     variable_names = list(dictionary.keys())
+#     combs = list(itertools.combinations(variable_names, 2))
+#     n = len(patients)
+#     # df_stay_id = pd.DataFrame.from_records(variable_names, columns=['stay_id','results'])
+#     stay = pd.DataFrame([dictionary]).melt()
+#     dist = lambda a, b: dtw_ndim.distance(a, b)
+#     distance_vectors = [dist(dictionary[pair[0]], dictionary[pair[1]]) for pair in combs]
+#     # DTW_distance_matrix = squareform(np.array(distance_vectors))
+#     DTW_distance_matrix = pd.DataFrame(squareform(np.array(distance_vectors)), columns=stay.variable.unique(),
+#                                        index=stay.variable.unique())
+#     #DTW_distance_matrix.to_csv('out_dtw_distance_matrix', index=False)
+#     return DTW_distance_matrix
 
 
 def indep_dtw(df, patients):
@@ -82,7 +91,6 @@ def indep_dtw(df, patients):
     vitals = [temperature, respiration, heart_rate, sats, systolic_bp, eye_gcs, verbal_gcs, motor_gcs]
     t = list(temperature.values())
     DTW_t = dtaidistance.dtw.distance_matrix(t)
-    print('done')
     r = list(respiration.values())
     DTW_r = dtaidistance.dtw.distance_matrix(r)
     hr = list(heart_rate.values())
@@ -98,31 +106,40 @@ def indep_dtw(df, patients):
     mg = list(motor_gcs.values())
     DTW_mg = dtaidistance.dtw.distance_matrix(mg)
     total_DTW_matrix = DTW_t + DTW_r + DTW_hr + DTW_s + DTW_sb + DTW_eg + DTW_vg + DTW_mg
-    add_100 = lambda i: i / 8
-    vectorized_add_100 = np.vectorize(add_100)
-    average_DTW_matrix = vectorized_add_100(total_DTW_matrix)
-    return average_DTW_matrix
+
+    return total_DTW_matrix
 
 
 
 
 if __name__ == '__main__':
-    df = pd.read_csv('/Users/theabarnes/Documents/Masters/scaled_df_2weeks.csv')
-    unique_patient_stays = pd.read_csv('/Users/theabarnes/Documents/Masters/Technical Project/6000_unique_patient_ids.csv')
+    # Import the scaled_df, outputted from Feature_transformation.py
+    df = pd.read_csv('')
 
-
+    # Replace missing continuous vitals with the mean value across admission for each patient
     vitals = ['temperature', 'sats','systolic_bp','respiration','heart_rate']
     df = fill_mean(df, vitals)
 
+    # Replace discrete vitals with the mode value across admission for each patient
     gcs_vitals = ['gcs_eye','gcs_verbal','gcs_motor']
-    df = fill_mean(df, gcs_vitals)
+    df = fill_mode(df, gcs_vitals)
 
     df = df.dropna()
     df['charttime'] = pd.to_datetime(df['charttime'])
     df = df.sort_values(by='charttime')
-    unique_patient_stays = unique_patient_stays['stay_id'].tolist()
+    unique_patient_stays = df.stay_id.unique().tolist()
+
+    # Independent DTW is used in the pipeline, meaning there is a DTW distance matrix for each vital measurement.
+    # In my analysis, I add these matrices together to perform dimensionality reduction and clustering on, however
+    # if clustering of individual vital distance matrices is required, alter the indep_dtw function to return these
+    # individual distance matrices.
     average_dtw_matrix = indep_dtw(df, unique_patient_stays)
 
+
+
+
+
+       
 
 
 
