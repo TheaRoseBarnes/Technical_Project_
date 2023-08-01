@@ -16,9 +16,15 @@ import matplotlib.pyplot as plt
 
 
 # import non time-dependent data
-df_admissions = pd.read_csv('/Users/theabarnes/Documents/Masters/Technical Project/Pycharm/Main_data/admissions-2.csv')
+# import admissions table from MIMIC-IV data found in hosp module
+df_admissions = pd.read_csv('')
+
+# import icustays table from MIMIC-IV data found in icu module
 icu_stays = pd.read_csv('/Users/theabarnes/Documents/Masters/Technical Project/Pycharm/Main_data/icustays.csv')
-cardiac_df = pd.read_csv('/Users/theabarnes/Documents/cardiac_arrests_2.csv/Sheet 1-cardiac_arrests.csv')
+
+#cardiac_df = pd.read_csv('/Users/theabarnes/Documents/cardiac_arrests_2.csv/Sheet 1-cardiac_arrests.csv')
+
+# select relevant features
 df_admissions1 = df_admissions[['hadm_id','hospital_expire_flag','admission_type','admission_location']]
 
 def Most_Common (lst):
@@ -172,9 +178,12 @@ def cluster_data(df, Folds = 10):
 if __name__ =='__main__':
 
     # import prediction data and cluster labels
-    coordinates =pd.read_csv('/Users/theabarnes/Documents/Masters/Technical Project/24_clusters.csv', na_values=np.nan)
+    # import coordinates outputted from clustering.py file
+    coordinates =pd.read_csv('', na_values=np.nan)
+
+    # import prediction_data table
     main_data_24 = pd.read_csv('/Users/theabarnes/Documents/Masters/Technical Project/Pycharm/24_prediction_2.csv', na_values=np.nan)
-    #
+    
 
     # # CARDIAC ARREST ADDITON
     # cardiac_data = pd.read_csv('/Users/theabarnes/Documents/Masters/Technical Project/Pycharm/cardic_24_prediction_data.csv', na_values=np.nan)
